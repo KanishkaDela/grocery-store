@@ -2,8 +2,9 @@
 const nextConfig = {
     reactStrictMode:false,
     images:{
-        domains:['localhost']
-    }
+        domains:['192.168.1.100']
+    },
+   
 };
 
 export default nextConfig;
