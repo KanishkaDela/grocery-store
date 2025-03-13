@@ -1,7 +1,7 @@
 const { default: axios } = require("axios");
 
 const axiosClient=axios.create({
-    baseURL:'http://192.168.1.101:1337/api'
+    baseURL:'http://192.168.1.102:1337/api'
 })
 
 const getCategory=()=>axiosClient.get('/categories?populate=*');
@@ -14,8 +14,12 @@ const getCategoryList=()=>axiosClient.get('/categories?populate=*').then(resp=>{
     return resp.data.data
 })
 
+const getAllProducts=()=>axiosClient.get('/products?populate=*').then(resp=>{
+    return resp.data.data
+})
 export default{
     getCategory,
     getSliders,
-    getCategoryList
+    getCategoryList,
+    getAllProducts
 }
