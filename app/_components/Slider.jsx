@@ -21,7 +21,7 @@ export default function Slider({sliderList}) {
                     width={1000}
                     height={370}
                     alt='slider'
-                    className='w-full h-[200px] md:h-[400px] object-cover rounded-2xl '
+                    className='w-full h-[200px] md:h-[500px] object-cover rounded-2xl '
                     
                     />
                     
