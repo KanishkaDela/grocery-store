@@ -1,6 +1,15 @@
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import React from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import ProductItemDetail from './ProductItemDetail'
 
 export default function ProductItem({product}) {
   return (
@@ -18,11 +27,23 @@ export default function ProductItem({product}) {
       <div className='flex gap-3'>
       {product.sellingPrice&& 
       <h2 className='font-bold text-lg'>Rs.{product.sellingPrice}</h2>}
-      <h2 className={`font-bold text-lg ${product.sellingPrice&&'line-through text-gray-500'}`}>${product.mrp}</h2>
+      <h2 className={`font-bold text-lg ${product.sellingPrice&&'line-through text-gray-500'}`}>Rs.{product.mrp}</h2>
       </div>
-      
-      <Button variant="outline"
+
+      <Dialog>
+        <DialogTrigger asChild>
+        <Button variant="outline"
       className="text-primary hover:text-white hover:bg-primary">Add to cart</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogDescription>
+              <ProductItemDetail product={product}/>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
     </div>
   )
 }
