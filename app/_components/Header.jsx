@@ -18,6 +18,7 @@ import Link from 'next/link'
 function Header() {
 
     const [categoryList,setCategoryList] = useState([]);
+    const isLogin=sessionStorage.getItem('jwt')?true:false
     useEffect(()=>{
         getCategoryList();
     },[])
@@ -48,7 +49,9 @@ function Header() {
                         <DropdownMenuLabel>Browse Category</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         {categoryList.map((category,index) => (
-                            <Link href={'/products-category/'+category.name}>
+                            <Link
+                             key={index}
+                             href={'/products-category/'+category.name}>
                             <DropdownMenuItem className="flex gap-4items-center cursor-pointer">
                                 <Image src={
                                     process.env.NEXT_PUBLIC_BACKEND_BASE_URL+category?.icon?.[0]?.url} 
@@ -74,7 +77,11 @@ function Header() {
 
         <div className='flex gap-5 items-center'>
             <h2 className='flex gap-2 items-center text-lg'> <ShoppingBag/> 0</h2>
-            <Button>Login</Button>
+            {!isLogin&&
+            <Link href={'/sign-in'}>
+                <Button>Login</Button>
+            </Link>
+            }
         </div>
     </div>
   )
