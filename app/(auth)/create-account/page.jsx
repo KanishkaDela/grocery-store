@@ -1,19 +1,32 @@
 "use client"
+import GlobalApi from '@/app/_utils/GlobalApi'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import { toast } from 'sonner'
 
 function CreateAccount() {
     const [username,setUsername] = useState();
     const [email,setEmail] = useState();
     const [password,setPassword] = useState();
+    const router=useRouter();
 
     const onCreateAccount=()=>{
-
+        GlobalApi.registerUSer(username,email,password).then(resp=>{
+            console.log(resp.data.user)
+            console.log(resp.data.jwt)
+            sessionStorage.setItem('user',JSON.stringify(resp.data.user));
+            sessionStorage.setItem('jwt',resp.data.jwt);
+            toast("Account Created Successfully")
+            router.push('/');
+        },(e)=>{
+            toast("Error while creating account.")
+        })
     }
-    
+
   return (
     <div className='flex items-baseline justify-center my-10'>
       <div className='flex flex-col items-center justify-center
@@ -32,7 +45,9 @@ function CreateAccount() {
             placeholder='Password' 
             onChange={(e)=>setPassword(e.target.value)}
             />
-            <Button onClick={()=>onCreateAccount()}>Create an Account</Button>
+            <Button onClick={()=>onCreateAccount()}
+                disabled={!(username||email||password)}
+                >Create an Account</Button>
             <p>Already have an Account?&nbsp;
                 <Link href={'/sign-in'} className='text-blue-500'>
                     Click Here to Sign In
