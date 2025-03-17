@@ -1,17 +1,38 @@
 "use client"
+import GlobalApi from '@/app/_utils/GlobalApi'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 function SignIn() {
 
     const [password,setPassword] = useState();
     const [email,setEmail] = useState();
+    const router=useRouter();
 
+    useEffect(()=>{
+        const jwt=sessionStorage.getItem('jwt');
+        if(jwt)
+        {
+            router.push('/')
+        }
+    })
+    
     const onSignIn=()=>{
-
+        GlobalApi.SignIn(email,password).then(resp=>{
+            ;
+            sessionStorage.setItem('user',JSON.stringify(resp.data.user));
+            sessionStorage.setItem('jwt',resp.data.jwt);
+            toast("Login Successfully")
+            router.push('/');
+        },(e)=>{
+            toast("Server Error!")
+        
+        })
     }
   return (
      <div className='flex items-baseline justify-center my-10'>

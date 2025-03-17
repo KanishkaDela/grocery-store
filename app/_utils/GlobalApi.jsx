@@ -28,11 +28,17 @@ const registerUSer=(username,email,password)=>axiosClient.post('/auth/local/regi
     password:password
 });
 
+const SignIn=(email,password)=>axiosClient.post('/auth/local',{
+    identifier:email,
+    password:password
+})
+
 export default{
     getCategory,
     getSliders,
     getCategoryList,
     getAllProducts,
     getProductsByCategory,
-    registerUSer
+    registerUSer,
+    SignIn
 }
