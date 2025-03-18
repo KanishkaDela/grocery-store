@@ -1,6 +1,6 @@
 "use client"
 import { Button } from '@/components/ui/button'
-import { LayoutGrid, Search, ShoppingBag } from 'lucide-react'
+import { CircleUserRound, LayoutGrid, Search, ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import GlobalApi from '../_utils/GlobalApi'
@@ -13,12 +13,14 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 
 function Header() {
 
     const [categoryList,setCategoryList] = useState([]);
     const isLogin=sessionStorage.getItem('jwt')?true:false
+    const router=useRouter();
     useEffect(()=>{
         getCategoryList();
     },[])
@@ -30,6 +32,11 @@ function Header() {
             setCategoryList(resp.data.data);
             console.log(resp.data.data)
         })    
+    }
+
+    const onSignOut=()=>{
+        sessionStorage.clear();
+        router.push('/sign-in');
     }
 
   return (
@@ -77,10 +84,26 @@ function Header() {
 
         <div className='flex gap-5 items-center'>
             <h2 className='flex gap-2 items-center text-lg'> <ShoppingBag/> 0</h2>
-            {!isLogin&&
+            {!isLogin?
             <Link href={'/sign-in'}>
                 <Button>Login</Button>
             </Link>
+            :
+            <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <CircleUserRound className='bg-green-100 
+                p-2 rounded-full text-primary h-12 w-12
+                cursor-pointer'/>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>My Order</DropdownMenuItem>
+                <DropdownMenuItem onClick={()=>onSignOut()}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+            </DropdownMenu>
+
             }
         </div>
     </div>
