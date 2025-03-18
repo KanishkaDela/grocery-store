@@ -21,6 +21,7 @@ function Header() {
     const [categoryList,setCategoryList] = useState([]);
     const isLogin=sessionStorage.getItem('jwt')?true:false
     const router=useRouter();
+    
     useEffect(()=>{
         getCategoryList();
     },[])

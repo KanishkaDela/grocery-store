@@ -35,7 +35,7 @@ function SignIn() {
         })
     }
   return (
-     <div className='flex items-baseline justify-center my-10'>
+     <div className='flex items-baseline justify-center my-20'>
           <div className='flex flex-col items-center justify-center
           p-10 bg-slate-100 border border-gray-200'>
             <Image src='/logo.png' width={170} height={170} alt='logo' />
