@@ -1,6 +1,6 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { ShoppingBasket } from 'lucide-react'
+import { LoaderCircle, ShoppingBasket } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { use, useState } from 'react'
@@ -19,11 +19,14 @@ export default function ProductItemDetail({product}) {
 
     const router=useRouter();
     const [quantity,setQuantity]=useState(1);
+    const [loading,setLoading]=useState(false);
 
     const addToCart=()=>{
+      setLoading(true)
       if(!jwt)
       {
         router.push('/sign-in');
+        setLoading(false)
         return ;
       }
 
@@ -40,9 +43,10 @@ export default function ProductItemDetail({product}) {
       GlobalApi.addToCart(data,jwt).then(resp=>{
         console.log(resp);
         toast('Added to Cart')
+        setLoading(false)
       },(e)=>{
         toast('Error while adding into Cart')
-
+        setLoading(false)
       })
     }
 
@@ -73,9 +77,12 @@ export default function ProductItemDetail({product}) {
                 </div>
                 <h2 className='text-lg font-bold'> = Rs.{(quantity*productTotalPrice).toFixed(2)}</h2>
             </div>
-            <Button onClick={()=>addToCart()} className="flex gap-3">
+            <Button onClick={()=>addToCart()} 
+            className="flex gap-3"
+            disabled={loading}
+            >
                 <ShoppingBasket/>
-                Add to Cart
+                {loading?<LoaderCircle className='animate-spin' />:'Add to Cart'}
             </Button>
         </div>
         <h2> <span className='font-bold'>Category: </span>{product.categories?.[0]?.name}</h2>
