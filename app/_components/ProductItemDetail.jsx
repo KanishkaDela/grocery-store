@@ -3,14 +3,16 @@ import { Button } from '@/components/ui/button'
 import { LoaderCircle, ShoppingBasket } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React, { use, useState } from 'react'
+import React, { use, useContext, useState } from 'react'
 import GlobalApi from '../_utils/GlobalApi'
 import { toast } from 'sonner'
+import { UpdateCartContext } from './_context/UpdateCartContext'
 
 export default function ProductItemDetail({product}) {
     
     const jwt=sessionStorage.getItem('jwt');
     const user=JSON.parse(sessionStorage.getItem('user'));
+    const {updateCart,setUpdateCart}=useContext(UpdateCartContext)
     const [productTotalPrice,serProductTotalPrice] = useState(
         product.sellingPrice?
         product.sellingPrice:
@@ -35,7 +37,8 @@ export default function ProductItemDetail({product}) {
           quantity:quantity,
           amount:(quantity*productTotalPrice).toFixed(2),
           products:product.id, 
-          users_permissions_users:user.id
+          users_permissions_users:user.id,
+          userId:user.id
         }
         
       }
@@ -43,6 +46,7 @@ export default function ProductItemDetail({product}) {
       GlobalApi.addToCart(data,jwt).then(resp=>{
         console.log(resp);
         toast('Added to Cart')
+        setUpdateCart(!updateCart);
         setLoading(false)
       },(e)=>{
         toast('Error while adding into Cart')

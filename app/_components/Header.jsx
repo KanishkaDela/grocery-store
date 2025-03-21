@@ -1,8 +1,8 @@
 "use client"
 import { Button } from '@/components/ui/button'
-import { CircleUserRound, LayoutGrid, Search, ShoppingBag } from 'lucide-react'
+import { CircleUserRound, LayoutGrid, Search, ShoppingBag, ShoppingBasket } from 'lucide-react'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import GlobalApi from '../_utils/GlobalApi'
 import {
     DropdownMenu,
@@ -14,17 +14,27 @@ import {
   } from "@/components/ui/dropdown-menu"
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { UpdateCartContext } from './_context/UpdateCartContext'
 
 
 function Header() {
 
     const [categoryList,setCategoryList] = useState([]);
-    const isLogin=sessionStorage.getItem('jwt')?true:false
-    const router=useRouter();
+    const isLogin=sessionStorage.getItem('jwt')?true:false;
+    const user=JSON.parse(sessionStorage.getItem('user'))
+    const jwt=sessionStorage.getItem('jwt');
+    const [totalCartItem,setTotalCartItem]=useState(0)
+    const {updateCart,setUpdateCart}=useContext(UpdateCartContext)
     
+
+    const router=useRouter();
     useEffect(()=>{
         getCategoryList();
     },[])
+
+    useEffect(()=>{
+        getCartItems();
+    },[updateCart])
 
     /**get category list */
 
@@ -34,6 +44,14 @@ function Header() {
             console.log(resp.data.data)
         })    
     }
+
+    /**used to get total cart item */
+    const getCartItems=async()=>{
+        const cartItemList=await GlobalApi.getCartItems(user.id,jwt);
+        console.log(cartItemList);
+        setTotalCartItem(cartItemList?.length)
+    }
+
 
     const onSignOut=()=>{
         sessionStorage.clear();
@@ -84,7 +102,8 @@ function Header() {
         </div>
 
         <div className='flex gap-5 items-center'>
-            <h2 className='flex gap-2 items-center text-lg'> <ShoppingBag/> 0</h2>
+            <h2 className='flex gap-2 items-center text-lg'> <ShoppingBasket className='h-7 w-7'/> 
+            <span className='bg-primary text-white px-2 rounded-full'>{totalCartItem}</span></h2>
             {!isLogin?
             <Link href={'/sign-in'}>
                 <Button>Login</Button>

@@ -39,6 +39,13 @@ const addToCart=(data,jwt)=>axiosClient.post('/user-carts',data,{
     }
 });
 
+const getCartItems=(userId,jwt)=>axiosClient.get('/user-carts?filters[userId][$eq]='+userId+'&populate=*',
+    {
+        Authorization:'Bearer '+jwt
+    }).then(resp=>{
+        return resp.data.data
+    })
+
 export default{
     getCategory,
     getSliders,
@@ -47,5 +54,6 @@ export default{
     getProductsByCategory,
     registerUSer,
     SignIn,
-    addToCart
+    addToCart,
+    getCartItems
 }
