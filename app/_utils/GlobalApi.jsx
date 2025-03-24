@@ -39,11 +39,32 @@ const addToCart=(data,jwt)=>axiosClient.post('/user-carts',data,{
     }
 });
 
-const getCartItems=(userId,jwt)=>axiosClient.get('/user-carts?filters[userId][$eq]='+userId+'&populate=*',
+const getCartItems=(userId,jwt)=>axiosClient.get('/user-carts?filters[userId][$eq]='+userId+'&populate[products][populate]=images',
     {
-        Authorization:'Bearer '+jwt
+        headers:{
+            Authorization:'Bearer '+jwt
+        }
     }).then(resp=>{
-        return resp.data.data
+        const data=resp.data.data;
+        const cartItemsList=data.map((item,index)=>({
+            name:item.products?.[0]?.name,
+            quantity:item.quantity,
+            amount:item.amount,
+            image:item.products?.[0]?.images?.[0]?.url,
+            actualPrice:item.products?.[0]?.mrp,
+            id:item.documentId
+        }))
+
+        return cartItemsList
+
+    });
+
+    const deleteCartItem=(id,jwt)=>axiosClient.delete('/user-carts/'+id,
+    {
+        headers:{
+            Authorization:'Bearer '+jwt
+        }
+
     })
 
 export default{
@@ -55,5 +76,6 @@ export default{
     registerUSer,
     SignIn,
     addToCart,
-    getCartItems
+    getCartItems,
+    deleteCartItem
 }
