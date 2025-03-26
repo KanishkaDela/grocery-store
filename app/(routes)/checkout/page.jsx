@@ -2,6 +2,7 @@
 import GlobalApi from '@/app/_utils/GlobalApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 import { ArrowBigRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -21,6 +22,8 @@ function Checkout() {
     const [phone,setPhone]=useState();
     const [zip,setZip]=useState();
     const [address,setAddress]=useState();
+
+    const [exchangeRate, setExchangeRate] = useState(1); // Default to 1 in case of failure
      
           /**used to get total cart item */
           const getCartItems=async()=>{
@@ -61,6 +64,24 @@ function Checkout() {
                 });
                 setSubTotal(total.toFixed(2))
             },[cartItemList])
+
+            useEffect(() => {
+                fetchExchangeRate();
+            }, []);
+        
+            // Fetch exchange rate from LKR to USD
+            const fetchExchangeRate = async () => {
+                try {
+                    const response = await fetch('https://api.exchangerate-api.com/v4/latest/LKR');
+                    const data = await response.json();
+                    if (data && data.rates && data.rates.USD) {
+                        setExchangeRate(data.rates.USD);
+                    }
+                } catch (error) {
+                    console.error('Error fetching exchange rate:', error);
+                }
+            };
+        
         
             const calculateTotalAmount = () => {
                 const validSubtotal = Number(subtotal) || 0; // Convert subtotal to a number, default to 0
@@ -72,8 +93,14 @@ function Checkout() {
                 const taxAmount=subtotal*0.09
                 return taxAmount.toFixed(2);
             }
+
+            const calculateTotalUSD = () => {
+                return (calculateTotalAmount() * exchangeRate).toFixed(2);
+            };
             
-            
+            const onApprove=(data)=>{
+                console.log(data);
+            }
 
   return (
     <div>
@@ -106,7 +133,23 @@ function Checkout() {
                 </h2>
                 <hr></hr>
                 <h2 className='font-bold flex justify-between'>Total : <span>Rs.{calculateTotalAmount()}</span></h2>
-                <Button>Payment <ArrowBigRight /> </Button>
+                {/* <Button>Payment <ArrowBigRight /> </Button> */}
+                <PayPalButtons style={{ layout: "horizontal" }}
+                onApprove={onApprove}
+                createOrder={(data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [
+                            {
+                                amount: {
+                                    value: parseFloat(calculateTotalUSD()),
+                                    currency_code: 'USD'
+                                }
+                            }
+                        ]
+                    });
+                }}
+                />
+
             </div>
         </div>
       </div>
