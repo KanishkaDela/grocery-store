@@ -31,21 +31,41 @@ import { toast } from 'sonner'
 function Header() {
 
     const [categoryList,setCategoryList] = useState([]);
-    const isLogin=sessionStorage.getItem('jwt')?true:false;
-    const user=JSON.parse(sessionStorage.getItem('user'))
-    const jwt=sessionStorage.getItem('jwt');
+    const [isLogin, setIsLogin] = useState(false);
+    //const isLogin=sessionStorage.getItem('jwt')?true:false;
+    const [user, setUser] = useState(null);
+    const [jwt, setJwt] = useState(null);
+    //const user=JSON.parse(sessionStorage.getItem('user'))
+    //const jwt=sessionStorage.getItem('jwt');
     const [totalCartItem,setTotalCartItem]=useState(0)
     const {updateCart,setUpdateCart}=useContext(UpdateCartContext)
     const [cartItemList,setCartItemList]=useState([]);
 
     const router=useRouter();
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedJwt = sessionStorage.getItem('jwt');
+            const storedUser = sessionStorage.getItem('user');
+            setIsLogin(!!storedJwt);
+            setJwt(storedJwt);
+            setUser(storedUser ? JSON.parse(storedUser) : null);
+        }
+    }, []);
+
     useEffect(()=>{
         getCategoryList();
     },[])
 
-    useEffect(()=>{
-        getCartItems();
-    },[updateCart])
+    useEffect(() => {
+        if (user && jwt) {
+            getCartItems();
+        }
+    }, [updateCart, user, jwt]);
+
+    // useEffect(()=>{
+    //     getCartItems();
+    // },[updateCart])
 
     /**get category list */
 
