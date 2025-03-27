@@ -6,6 +6,7 @@ import { PayPalButtons } from '@paypal/react-paypal-js';
 import { ArrowBigRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner';
 
 function Checkout() {
 
@@ -100,6 +101,32 @@ function Checkout() {
             
             const onApprove=(data)=>{
                 console.log(data);
+
+                const payload = {
+                   data:{ 
+                        paymentId: data.paymentID,
+                        totalOrderAmount: parseFloat(calculateTotalAmount()),
+                        username: username,
+                        email: email,
+                        phone: phone,
+                        zip: zip,
+                        address: address,
+                        orderItemList: cartItemList.map(item => ({
+                            product: item.product, // Send just the product ID
+                            quantity: item.quantity,
+                            price: item.amount
+                            })),
+                        userId: user.id
+                }}
+                
+                console.log('Order Payload:', JSON.stringify(payload, null, 2));
+
+                GlobalApi.createOrder(payload, jwt).then(resp => {
+                    console.log(resp);
+                    toast('Order Placed Successfully');
+                    // router.push('/order-success'); // Redirect after successful payment
+                }).catch(error => console.error('Order creation failed:', error));
+                
             }
 
   return (
@@ -133,7 +160,8 @@ function Checkout() {
                 </h2>
                 <hr></hr>
                 <h2 className='font-bold flex justify-between'>Total : <span>Rs.{calculateTotalAmount()}</span></h2>
-                {/* <Button>Payment <ArrowBigRight /> </Button> */}
+                {/* <Button onClick={()=>onApprove({paymentId:123})}>Payment <ArrowBigRight /> </Button> */}
+                {calculateTotalAmount()>1500&&
                 <PayPalButtons style={{ layout: "horizontal" }}
                 onApprove={onApprove}
                 createOrder={(data, actions) => {
@@ -149,6 +177,7 @@ function Checkout() {
                     });
                 }}
                 />
+            }
 
             </div>
         </div>

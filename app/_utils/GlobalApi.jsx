@@ -52,7 +52,8 @@ const getCartItems=(userId,jwt)=>axiosClient.get('/user-carts?filters[userId][$e
             amount:item.amount,
             image:item.products?.[0]?.images?.[0]?.url,
             actualPrice:item.products?.[0]?.mrp,
-            id:item.documentId
+            id:item.documentId,
+            product:item.products?.[0]?.id
         }))
 
         return cartItemsList
@@ -67,6 +68,12 @@ const getCartItems=(userId,jwt)=>axiosClient.get('/user-carts?filters[userId][$e
 
     })
 
+    const createOrder=(data,jwt)=>axiosClient.post('/orders',data,{
+        headers:{
+            Authorization:'Bearer '+jwt
+        }
+    })
+
 export default{
     getCategory,
     getSliders,
@@ -77,5 +84,6 @@ export default{
     SignIn,
     addToCart,
     getCartItems,
-    deleteCartItem
+    deleteCartItem,
+    createOrder
 }
