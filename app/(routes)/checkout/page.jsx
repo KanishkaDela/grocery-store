@@ -124,7 +124,24 @@ function Checkout() {
                 GlobalApi.createOrder(payload, jwt).then(resp => {
                     console.log(resp);
                     toast('Order Placed Successfully');
-                    // router.push('/order-success'); // Redirect after successful payment
+
+                     // Delete all cart items one by one
+                    Promise.all(
+                        cartItemList.map(item => GlobalApi.deleteCartItem(item.id, jwt))
+                    ).then(() => {
+                        console.log("Cart cleared successfully.");
+                        setCartItemList([]); // Clear the cart state
+                        setTotalCartItem(0);
+                        setSubTotal(0);
+                        router.replace('/order-confirmation');
+                    }).catch(error => {
+                        console.error("Error clearing cart:", error);
+            });
+                    // cartItemList.forEach((item,index)=>{
+                    //     GlobalApi.deleteCartItem(item.id).then(resp=>{
+                    //      })
+                    // })
+                    // router.replace('/order-confirmation');
                 }).catch(error => console.error('Order creation failed:', error));
                 
             }
@@ -162,7 +179,9 @@ function Checkout() {
                 <h2 className='font-bold flex justify-between'>Total : <span>Rs.{calculateTotalAmount()}</span></h2>
                 {/* <Button onClick={()=>onApprove({paymentId:123})}>Payment <ArrowBigRight /> </Button> */}
                 {calculateTotalAmount()>1500&&
-                <PayPalButtons style={{ layout: "horizontal" }}
+                <PayPalButtons 
+                disabled={!(username&&email&&address&&zip)}
+                style={{ layout: "horizontal" }}
                 onApprove={onApprove}
                 createOrder={(data, actions) => {
                     return actions.order.create({

@@ -134,6 +134,9 @@ function Header() {
                                     height={30}
                                     alt='icon'
                                     unoptimized={true}
+                                    onError={(e) => {
+                                        e.currentTarget.src = "/placeholder.png"
+                                      }}
                                 />
                                 <h2 className='text-lg'>{category?.name}</h2>
                             </DropdownMenuItem>
