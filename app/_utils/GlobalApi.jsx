@@ -74,6 +74,32 @@ const getCartItems=(userId,jwt)=>axiosClient.get('/user-carts?filters[userId][$e
         }
     })
 
+    const getMyOrder = (userId, jwt) => {
+        console.log('Sending request to fetch orders...');
+        return axiosClient.get('/orders?filters[userId][$eq]=' + userId + '&populate[orderItemList][populate][product][populate]=images',
+        {
+            headers:{
+                Authorization:'Bearer '+jwt
+            }
+        })
+            .then(resp => {
+                console.log('Response received:', resp);
+                const response = resp.data.data;
+                console.log('Response data:', response);
+                const orderList = response.map((item, index) => ({
+                    id:item.id,
+                    totalOrderAmount:item.totalOrderAmount,
+                    paymentId:item.paymentId,
+                    orderItemList:item.orderItemList
+                }));
+                return orderList;
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error.response ? error.response.data : error.message);
+                throw error;  // Re-throw the error to handle it in the component
+            });
+    };
+
 export default{
     getCategory,
     getSliders,
@@ -85,5 +111,6 @@ export default{
     addToCart,
     getCartItems,
     deleteCartItem,
-    createOrder
+    createOrder,
+    getMyOrder
 }

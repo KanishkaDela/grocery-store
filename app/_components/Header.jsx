@@ -198,7 +198,9 @@ function Header() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>My Order</DropdownMenuItem>
+                <Link href={'/my-order'}>
+                    <DropdownMenuItem>My Order</DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem onClick={()=>onSignOut()}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
