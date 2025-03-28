@@ -110,7 +110,14 @@ function Header() {
   return (
     <div className='p-5 shadow-sm flex justify-between'>
         <div className='flex items-center gap-8'>
-            <Image src='/logo.png' alt='logo' width={100} height={50}/>
+            <Link href={'/'}>
+                <Image src='/logo.png' 
+                alt='logo' 
+                width={100} 
+                height={50}
+                className='cursor-pointer'
+                />
+            </Link>
         
 
             <DropdownMenu>

@@ -90,7 +90,9 @@ const getCartItems=(userId,jwt)=>axiosClient.get('/user-carts?filters[userId][$e
                     id:item.id,
                     totalOrderAmount:item.totalOrderAmount,
                     paymentId:item.paymentId,
-                    orderItemList:item.orderItemList
+                    orderItemList:item.orderItemList,
+                    createdAt:item.createdAt,
+                    status:item.progress
                 }));
                 return orderList;
             })
