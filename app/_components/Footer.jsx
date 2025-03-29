@@ -10,8 +10,7 @@ export default function Footer() {
     </div>
 
     <p className="mx-auto mt-6 max-w-md text-center leading-relaxed text-gray-500">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Incidunt consequuntur amet culpa cum
-      itaque neque.
+    Online Grocery is your one-stop online grocery store, delivering fresh produce, pantry essentials, and household items right to your doorstep.
     </p>
 
     <ul className="mt-12 flex flex-wrap justify-center gap-6 md:gap-8 lg:gap-12">
